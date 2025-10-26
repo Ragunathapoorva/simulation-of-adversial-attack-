@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Based Adversarial Attack Detection & Mitigation Platform v2.2.0</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-container">
+            <div class="loading-logo">🛡️ AI Attack Detection Platform v2.2.0</div>
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="loadingProgress"></div>
+                </div>
+                <div class="loading-text" id="loadingText">Initializing system...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Container -->
+    <div class="dashboard-container" id="mainDashboard" style="display: none;">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1 class="dashboard-title">🛡️ AI Attack Detection & Mitigation Platform</h1>
+                <div class="status-indicator">
+                    <span class="status-dot" id="systemStatus"></span>
+                    <span class="status-text" id="systemStatusText">System Online</span>
+                    <span class="uptime-text" id="uptimeText">Uptime: 72h 30m</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="emergency-controls">
+                    <button class="btn btn--error" id="emergencyStopBtn">🚨 Emergency Stop</button>
+                    <button class="btn btn--warning" id="testAttackBtn">🔥 Launch Test Attack</button>
+                </div>
+                <div class="mode-toggle">
+                    <label class="toggle-label">Safe Demo Mode</label>
+                    <label class="switch">
+                        <input type="checkbox" id="safeModeToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="user-info">
+                    <span class="current-user" id="currentUser">Admin User</span>
+                    <button class="btn btn--outline btn--sm" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="dashboard-nav">
+            <button class="nav-tab active" data-tab="dashboard">📊 Dashboard</button>
+            <button class="nav-tab" data-tab="simulator">🌐 Network Simulator</button>
+            <button class="nav-tab" data-tab="attacks">⚔️ Attack Control</button>
+            <button class="nav-tab" data-tab="ai-models">🤖 AI Models</button>
+            <button class="nav-tab" data-tab="logs">📋 Logs</button>
+            <button class="nav-tab" data-tab="replay">🎬 Replay</button>
+            <button class="nav-tab" data-tab="settings">⚙️ Settings</button>
+            <button class="nav-tab" data-tab="users">👥 User Management</button>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="dashboard-main">
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboard-tab">
+                <div class="dashboard-grid">
+                    <!-- System Overview -->
+                    <div class="panel overview-panel">
+                        <div class="panel-header">
+                            <h3>System Overview</h3>
+                            <div class="live-indicator">🟢 LIVE</div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="metrics-grid">
+                                <div class="metric-card metric-cpu">
+                                    <div class="metric-icon">💻</div>
+                                    <div class="metric-content">
+                                        <div class="metric-value" id="cpuUsage">37.8%</div>
+                                        <div class="metric-label">CPU Usage</div>
+                                        <div class="metric-trend" id="cpuTrend">↗️ +2.3%</div>
+                                    </div>
+                                </div>
+                                <div class="metric-card metric-memory">
+                                    <div class="metric-icon">🧠</div>
+                                    <div class="metric-content">
+                                        <div class="metric-value" id="memoryUsage">72.4%</div>
+                                        <div class="metric-label">Memory Usage</div>
+                                        <div class="metric-trend" id="memoryTrend">➡️ stable</div>
+                                    </div>
+                                </div>
+                                <div class="metric-card metric-network">
+                                    <div class="metric-icon">📡</div>
+                                    <div class="metric-content">
+                                        <div class="metric-value" id="networkThroughput">1.34 Gbps</div>
+                                        <div class="metric-label">Network Throughput</div>
+                                        <div class="metric-trend" id="networkTrend">↗️ +15.2%</div>
+                                    </div>
+                                </div>
+                                <div class="metric-card metric-threats">
+                                    <div class="metric-icon">🔥</div>
+                                    <div class="metric-content">
+                                        <div class="metric-value" id="threatsDetected">15</div>
+                                        <div class="metric-label">Threats Today</div>
+                                        <div class="metric-trend" id="threatsTrend">↘️ -3</div>
+                                    </div>
+                                </div>
+                                <div class="metric-card metric-accuracy">
+                                    <div class="metric-icon">🎯</div>
+                                    <div class="metric-content">
+                                        <div class="metric-value" id="aiAccuracy">96.8%</div>
+                                        <div class="metric-label">AI Accuracy</div>
+                                        <div class="metric-trend" id="accuracyTrend">↗️ +0.2%</div>
+                                    </div>
+                                </div>
+                                <div class="metric-card metric-devices">
+                                    <div class="metric-icon">📱</div>
+                                    <div class="metric-content">
+                                        <div class="metric-value" id="devicesOnline">6/6</div>
+                                        <div class="metric-label">Devices Online</div>
+                                        <div class="metric-trend" id="devicesTrend">✅ All Online</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3D Network Topology -->
+                    <div class="panel network-topology-panel">
+                        <div class="panel-header">
+                            <h3>Network Topology - 3D View</h3>
+                            <div class="panel-controls">
+                                <button class="btn btn--sm" id="resetNetworkView">🔄 Reset View</button>
+                                <button class="btn btn--sm" id="toggleNetworkLabels">🏷️ Toggle Labels</button>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="network-3d-container" id="network3D"></div>
+                            <div class="network-legend">
+                                <div class="legend-item"><span class="legend-dot normal"></span>Normal</div>
+                                <div class="legend-item"><span class="legend-dot warning"></span>Warning</div>
+                                <div class="legend-item"><span class="legend-dot error"></span>Compromised</div>
+                                <div class="legend-item"><span class="legend-dot attacking"></span>Attacking</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Real-time Charts -->
+                    <div class="panel charts-panel">
+                        <div class="panel-header">
+                            <h3>Real-time Network Analysis</h3>
+                            <div class="chart-controls">
+                                <select class="form-control" id="chartTimeframe">
+                                    <option value="1h">Last 1 Hour</option>
+                                    <option value="6h">Last 6 Hours</option>
+                                    <option value="24h" selected>Last 24 Hours</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="charts-container">
+                                <div class="chart-wrapper">
+                                    <canvas id="threatChart" style="position: relative; height: 200px;"></canvas>
+                                </div>
+                                <div class="chart-wrapper">
+                                    <canvas id="accuracyChart" style="position: relative; height: 200px;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="panel activity-panel">
+                        <div class="panel-header">
+                            <h3>Recent Security Events</h3>
+                            <div class="auto-refresh">🔄 Auto-refresh: <span id="refreshTimer">30s</span></div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="activity-feed" id="activityFeed">
+                                <div class="activity-item success">
+                                    <div class="activity-icon">✅</div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">DDoS Attack Blocked</div>
+                                        <div class="activity-details">150 malicious requests blocked from 192.168.1.105</div>
+                                        <div class="activity-time">2 minutes ago</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item warning">
+                                    <div class="activity-icon">⚠️</div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Anomaly Detected</div>
+                                        <div class="activity-details">Unusual traffic pattern from Smart Camera Alpha</div>
+                                        <div class="activity-time">5 minutes ago</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item info">
+                                    <div class="activity-icon">ℹ️</div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Model Training Complete</div>
+                                        <div class="activity-details">CNN-LSTM model accuracy improved to 96.8%</div>
+                                        <div class="activity-time">15 minutes ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Network Simulator Tab -->
+            <div class="tab-content" id="simulator-tab">
+                <div class="simulator-controls">
+                    <div class="control-section">
+                        <h3>Device Management</h3>
+                        <button class="btn btn--primary" id="addDeviceBtn">➕ Add Device</button>
+                        <button class="btn btn--secondary" id="generateTrafficBtn">📡 Generate Traffic</button>
+                        <button class="btn btn--outline" id="exportTopologyBtn">💾 Export Topology</button>
+                    </div>
+                    <div class="control-section">
+                        <h3>Network Status</h3>
+                        <div class="status-indicators">
+                            <div class="status-item">
+                                <span class="status-label">Total Devices:</span>
+                                <span class="status-value" id="totalDevices">6</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Online:</span>
+                                <span class="status-value success" id="onlineDevices">6</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Traffic Rate:</span>
+                                <span class="status-value" id="totalTrafficRate">87.2 KB/s</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="simulator-grid">
+                    <!-- Device List -->
+                    <div class="panel devices-panel">
+                        <div class="panel-header">
+                            <h3>IoT Devices</h3>
+                            <div class="device-filters">
+                                <select class="form-control" id="deviceTypeFilter">
+                                    <option value="all">All Types</option>
+                                    <option value="security_camera">Security Cameras</option>
+                                    <option value="temperature_sensor">Sensors</option>
+                                    <option value="smart_lock">Smart Locks</option>
+                                    <option value="thermostat">Thermostats</option>
+                                    <option value="gateway">Gateways</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="devices-list" id="devicesList">
+                                <!-- Devices populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Network Visualization -->
+                    <div class="panel network-viz-panel">
+                        <div class="panel-header">
+                            <h3>Interactive Network Map</h3>
+                            <div class="viz-controls">
+                                <button class="btn btn--sm" id="layoutAutoBtn">🎯 Auto Layout</button>
+                                <button class="btn btn--sm" id="layoutCircleBtn">⭕ Circle Layout</button>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="network-canvas" id="networkCanvas"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attack Control Tab -->
+            <div class="tab-content" id="attacks-tab">
+                <div class="attacks-grid">
+                    <!-- Attack Configuration -->
+                    <div class="panel attack-config-panel">
+                        <div class="panel-header">
+                            <h3>Attack Configuration</h3>
+                            <div class="attack-status-badge" id="attackStatusBadge">Ready</div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="form-label">Attack Type</label>
+                                <select class="form-control" id="attackTypeSelect">
+                                    <option value="fgsm">FGSM - Fast Gradient Sign Method</option>
+                                    <option value="pgd">PGD - Projected Gradient Descent</option>
+                                    <option value="ddos">DDoS - Distributed Denial of Service</option>
+                                    <option value="spoofing">Spoofing - Identity Masquerading</option>
+                                    <option value="injection">Injection - Command Injection</option>
+                                    <option value="botnet">Botnet - Coordinated Attack</option>
+                                </select>
+                            </div>
+                            <div id="attackParameters" class="attack-parameters">
+                                <!-- Dynamic parameters based on attack type -->
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Target Devices</label>
+                                <div class="target-selection" id="targetSelection">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Visualization Delay (Safe Mode)</label>
+                                <input type="range" class="form-control" id="visualizationDelay" min="5" max="60" value="8">
+                                <div class="range-labels">
+                                    <span>5s</span>
+                                    <span id="delayValue">8s</span>
+                                    <span>60s</span>
+                                </div>
+                            </div>
+                            <div class="attack-controls">
+                                <button class="btn btn--primary btn--lg" id="launchAttackBtn">🚀 Launch Attack</button>
+                                <button class="btn btn--warning" id="pauseAttackBtn" disabled>⏸️ Pause</button>
+                                <button class="btn btn--error" id="stopAttackBtn" disabled>⏹️ Stop</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attack Visualization -->
+                    <div class="panel attack-viz-panel">
+                        <div class="panel-header">
+                            <h3>Attack Visualization</h3>
+                            <div class="attack-timer" id="attackTimer">00:00</div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="attack-charts">
+                                <div class="chart-wrapper">
+                                    <canvas id="attackImpactChart" style="position: relative; height: 150px;"></canvas>
+                                </div>
+                                <div class="chart-wrapper">
+                                    <canvas id="anomalyScoreChart" style="position: relative; height: 150px;"></canvas>
+                                </div>
+                            </div>
+                            <div class="attack-progress" id="attackProgress">
+                                <div class="progress-stages">
+                                    <div class="stage" id="stage-initiation">
+                                        <div class="stage-icon">🎯</div>
+                                        <div class="stage-label">Initiation</div>
+                                    </div>
+                                    <div class="stage" id="stage-execution">
+                                        <div class="stage-icon">⚡</div>
+                                        <div class="stage-label">Execution</div>
+                                    </div>
+                                    <div class="stage" id="stage-detection">
+                                        <div class="stage-icon">🔍</div>
+                                        <div class="stage-label">Detection</div>
+                                    </div>
+                                    <div class="stage" id="stage-mitigation">
+                                        <div class="stage-icon">🛡️</div>
+                                        <div class="stage-label">Mitigation</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attack Timeline -->
+                    <div class="panel attack-timeline-panel">
+                        <div class="panel-header">
+                            <h3>Attack Timeline</h3>
+                            <button class="btn btn--sm" id="exportTimelineBtn">💾 Export Timeline</button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="timeline-container" id="attackTimeline">
+                                <div class="no-attack-message">
+                                    <h4>No Active Attack</h4>
+                                    <p>Launch an attack to see real-time timeline progression</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Models Tab -->
+            <div class="tab-content" id="ai-models-tab">
+                <div class="models-grid">
+                    <!-- Model Performance -->
+                    <div class="panel model-performance-panel">
+                        <div class="panel-header">
+                            <h3>Model Performance Overview</h3>
+                            <button class="btn btn--primary" id="trainModelBtn">🧠 Train New Model</button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="model-cards" id="modelCards">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Training Progress -->
+                    <div class="panel training-panel">
+                        <div class="panel-header">
+                            <h3>Training Progress</h3>
+                            <div class="training-status" id="trainingStatus">Idle</div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="training-content" id="trainingContent">
+                                <div class="no-training-message">
+                                    <h4>No Training in Progress</h4>
+                                    <p>Start training to see real-time progress</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Model Comparison -->
+                    <div class="panel model-comparison-panel">
+                        <div class="panel-header">
+                            <h3>Model Comparison</h3>
+                            <div class="comparison-controls">
+                                <select class="form-control" id="modelA">
+                                    <option value="">Select Model A</option>
+                                </select>
+                                <span>vs</span>
+                                <select class="form-control" id="modelB">
+                                    <option value="">Select Model B</option>
+                                </select>
+                                <button class="btn btn--sm" id="compareModelsBtn">📊 Compare</button>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="comparison-chart">
+                                <canvas id="modelComparisonChart" style="position: relative; height: 300px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs Tab -->
+            <div class="tab-content" id="logs-tab">
+                <div class="logs-controls">
+                    <div class="filter-controls">
+                        <select class="form-control" id="logTypeFilter">
+                            <option value="all">All Types</option>
+                            <option value="info">Info</option>
+                            <option value="warning">Warning</option>
+                            <option value="error">Error</option>
+                            <option value="success">Success</option>
+                        </select>
+                        <select class="form-control" id="logSeverityFilter">
+                            <option value="all">All Severities</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                        <input type="text" class="form-control" id="logSearchInput" placeholder="Search logs...">
+                        <button class="btn btn--secondary" id="searchLogsBtn">🔍 Search</button>
+                    </div>
+                    <div class="export-controls">
+                        <select class="form-control" id="logPageSize">
+                            <option value="25">25 per page</option>
+                            <option value="50" selected>50 per page</option>
+                            <option value="100">100 per page</option>
+                        </select>
+                        <button class="btn btn--outline" id="exportLogsCSV">📄 Export CSV</button>
+                        <button class="btn btn--outline" id="exportLogsJSON">📋 Export JSON</button>
+                        <button class="btn btn--outline" id="exportLogsPDF">📑 Export PDF</button>
+                        <button class="btn btn--warning" id="clearAllLogs">🗑️ Clear All</button>
+                    </div>
+                </div>
+
+                <div class="logs-container">
+                    <div class="logs-table-container">
+                        <table class="logs-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Type</th>
+                                    <th>Severity</th>
+                                    <th>Source</th>
+                                    <th>Message</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination-controls" id="logsPagination">
+                        <button class="btn btn--sm" id="prevLogsBtn">← Previous</button>
+                        <span class="pagination-info" id="logsPageInfo">Page 1 of 1</span>
+                        <button class="btn btn--sm" id="nextLogsBtn">Next →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Replay Tab -->
+            <div class="tab-content" id="replay-tab">
+                <div class="replay-grid">
+                    <!-- Replay Selection -->
+                    <div class="panel replay-selection-panel">
+                        <div class="panel-header">
+                            <h3>Attack Recordings</h3>
+                            <button class="btn btn--primary" id="loadReplayBtn">📂 Load Replay</button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="replay-list" id="replayList">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Replay Controls -->
+                    <div class="panel replay-controls-panel">
+                        <div class="panel-header">
+                            <h3>Playback Controls</h3>
+                            <div class="replay-info" id="replayInfo">No replay loaded</div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="media-controls">
+                                <button class="btn btn--primary" id="playBtn">▶️</button>
+                                <button class="btn btn--secondary" id="pauseBtn">⏸️</button>
+                                <button class="btn btn--secondary" id="stopReplayBtn">⏹️</button>
+                                <button class="btn btn--outline" id="stepBackBtn">⏮️</button>
+                                <button class="btn btn--outline" id="stepForwardBtn">⏭️</button>
+                                <select class="form-control speed-control" id="playbackSpeed">
+                                    <option value="0.5">0.5x</option>
+                                    <option value="1" selected>1x</option>
+                                    <option value="2">2x</option>
+                                    <option value="4">4x</option>
+                                </select>
+                            </div>
+                            <div class="timeline-control">
+                                <input type="range" class="timeline-slider" id="timelineSlider" min="0" max="100" value="0" disabled>
+                                <div class="timeline-labels">
+                                    <span id="currentTime">00:00</span>
+                                    <span id="totalTime">00:00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- XAI Analysis -->
+                    <div class="panel xai-panel">
+                        <div class="panel-header">
+                            <h3>XAI - Explainable AI Analysis</h3>
+                            <button class="btn btn--sm" id="exportXAIBtn">💾 Export Analysis</button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="xai-content" id="xaiContent">
+                                <div class="no-xai-message">
+                                    <h4>No Analysis Available</h4>
+                                    <p>Load and play a replay to see AI decision explanations</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-content" id="settings-tab">
+                <div class="settings-grid">
+                    <!-- AI Settings -->
+                    <div class="panel ai-settings-panel">
+                        <div class="panel-header">
+                            <h3>AI Detection Settings</h3>
+                            <button class="btn btn--primary" id="saveAISettingsBtn">💾 Save Settings</button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="form-label">Detection Threshold</label>
+                                <input type="range" class="form-control" id="detectionThreshold" min="0.1" max="0.9" step="0.1" value="0.7">
+                                <div class="range-value" id="thresholdValue">0.7</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Model Sensitivity</label>
+                                <select class="form-control" id="modelSensitivity">
+                                    <option value="low">Low (Fewer alerts)</option>
+                                    <option value="medium" selected>Medium (Balanced)</option>
+                                    <option value="high">High (More alerts)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="enableAutoMitigation" checked>
+                                        Enable Auto-mitigation
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="enableRealTimeScanning" checked>
+                                        Enable Real-time Scanning
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Settings -->
+                    <div class="panel notification-settings-panel">
+                        <div class="panel-header">
+                            <h3>Notification Preferences</h3>
+                            <button class="btn btn--primary" id="saveNotificationSettingsBtn">💾 Save Settings</button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="emailNotifications" checked>
+                                        Email Notifications
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="smsNotifications">
+                                        SMS Notifications
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="inAppNotifications" checked>
+                                        In-app Notifications
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Notification Frequency</label>
+                                <select class="form-control" id="notificationFrequency">
+                                    <option value="immediate">Immediate</option>
+                                    <option value="hourly">Hourly Summary</option>
+                                    <option value="daily" selected>Daily Summary</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Settings -->
+                    <div class="panel system-settings-panel">
+                        <div class="panel-header">
+                            <h3>System Configuration</h3>
+                            <button class="btn btn--primary" id="saveSystemSettingsBtn">💾 Save Settings</button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="form-label">Theme</label>
+                                <select class="form-control" id="themeSelect">
+                                    <option value="auto">Auto (System)</option>
+                                    <option value="light">Light Mode</option>
+                                    <option value="dark">Dark Mode</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Update Frequency</label>
+                                <select class="form-control" id="updateFrequency">
+                                    <option value="1">1 second</option>
+                                    <option value="2" selected>2 seconds</option>
+                                    <option value="5">5 seconds</option>
+                                    <option value="10">10 seconds</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Data Retention (days)</label>
+                                <input type="number" class="form-control" id="dataRetention" value="30" min="1" max="365">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Management Tab -->
+            <div class="tab-content" id="users-tab">
+                <div class="users-controls">
+                    <button class="btn btn--primary" id="addUserBtn">👤 Add User</button>
+                    <button class="btn btn--secondary" id="importUsersBtn">📂 Import Users</button>
+                    <button class="btn btn--outline" id="exportUsersBtn">💾 Export Users</button>
+                </div>
+
+                <div class="users-grid">
+                    <!-- Users List -->
+                    <div class="panel users-list-panel">
+                        <div class="panel-header">
+                            <h3>System Users</h3>
+                            <div class="user-stats">
+                                <span class="stat-item">Total: <strong id="totalUsers">4</strong></span>
+                                <span class="stat-item">Active: <strong id="activeUsers">3</strong></span>
+                                <span class="stat-item">Admins: <strong id="adminUsers">1</strong></span>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="users-table-container">
+                                <table class="users-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Status</th>
+                                            <th>Last Login</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersTableBody">
+                                        <!-- Populated dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Permissions -->
+                    <div class="panel user-permissions-panel">
+                        <div class="panel-header">
+                            <h3>Role-Based Permissions</h3>
+                            <button class="btn btn--primary" id="savePermissionsBtn">💾 Save Permissions</button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="permissions-content" id="permissionsContent">
+                                <div class="no-user-message">
+                                    <h4>No User Selected</h4>
+                                    <p>Select a user to view and edit permissions</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add Device Modal -->
+    <div class="modal hidden" id="addDeviceModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New IoT Device</h3>
+                <button class="modal-close" id="closeAddDeviceModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addDeviceForm">
+                    <div class="form-group">
+                        <label class="form-label">Device Name</label>
+                        <input type="text" class="form-control" id="deviceName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Device Type</label>
+                        <select class="form-control" id="deviceType" required>
+                            <option value="">Select Type</option>
+                            <option value="security_camera">Security Camera</option>
+                            <option value="temperature_sensor">Temperature Sensor</option>
+                            <option value="smart_lock">Smart Lock</option>
+                            <option value="thermostat">Thermostat</option>
+                            <option value="gateway">Gateway</option>
+                            <option value="router">Router</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Protocol</label>
+                        <select class="form-control" id="deviceProtocol" required>
+                            <option value="">Select Protocol</option>
+                            <option value="HTTP">HTTP</option>
+                            <option value="MQTT">MQTT</option>
+                            <option value="CoAP">CoAP</option>
+                            <option value="Zigbee">Zigbee</option>
+                            <option value="LoRa">LoRa</option>
+                            <option value="Z-Wave">Z-Wave</option>
+                            <option value="Modbus">Modbus</option>
+                            <option value="DNP3">DNP3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">IP Address</label>
+                        <input type="text" class="form-control" id="deviceIP" placeholder="192.168.1.xxx" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Security Level</label>
+                        <select class="form-control" id="deviceSecurity">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn--secondary" id="cancelAddDevice">Cancel</button>
+                        <button type="submit" class="btn btn--primary">Add Device</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal hidden" id="addUserModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New User</h3>
+                <button class="modal-close" id="closeAddUserModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="userName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="userEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Role</label>
+                        <select class="form-control" id="userRole" required>
+                            <option value="">Select Role</option>
+                            <option value="administrator">Administrator</option>
+                            <option value="security_analyst">Security Analyst</option>
+                            <option value="researcher">Researcher</option>
+                            <option value="observer">Observer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="userPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="userPasswordConfirm" required>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn--secondary" id="cancelAddUser">Cancel</button>
+                        <button type="submit" class="btn btn--primary">Add User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
